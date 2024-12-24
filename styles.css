@@ -1,0 +1,66 @@
+body {
+    font-family: Arial, sans-serif;
+    width: 300px;
+    padding: 10px;
+  }
+  
+  .container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  h1 {
+    font-size: 18px;
+    margin: 0;
+  }
+  
+  #urlForm {
+    display: flex;
+    gap: 5px;
+  }
+  
+  #urlInput {
+    flex-grow: 1;
+    padding: 5px;
+  }
+  
+  button {
+    padding: 5px 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background-color: #45a049;
+  }
+  
+  #urlList {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .urlItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px;
+    border-bottom: 1px solid #ccc;
+  }
+  
+  .removeBtn {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 2px 5px;
+    cursor: pointer;
+  }
+  
+  .removeBtn:hover {
+    background-color: #d32f2f;
+  }
+  
+  
