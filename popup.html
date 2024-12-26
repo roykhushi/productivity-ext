@@ -3,17 +3,24 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>URL Whitelist</title>
+  <title>FocusGuard</title>
   <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
 </head>
 <body>
+  <canvas id="bgCanvas"></canvas>
   <div class="container">
-    <h1>URL Whitelist</h1>
+    <h1>FocusGuard</h1>
     <form id="urlForm">
       <input type="text" id="urlInput" placeholder="Enter URL" required>
-      <button type="submit">Add URL</button>
+      <button type="submit" id="addUrlBtn">Add URL</button>
     </form>
-    <ul id="urlList"></ul>
+    <div class="url-list-container">
+      <ul id="urlList"></ul>
+    </div>
+    <footer class="footer">
+      <a href="https://x.com/paulieadi_" target="_blank" rel="noopener noreferrer">Made with ❤️ by Aditya</a>
+    </footer>
   </div>
   <script src="popup.js"></script>
 </body>

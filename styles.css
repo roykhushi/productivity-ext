@@ -1,66 +1,172 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Roboto+Mono:wght@500&display=swap');
 body {
-    font-family: Arial, sans-serif;
-    width: 300px;
-    padding: 10px;
-  }
-  
-  .container {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  
-  h1 {
-    font-size: 18px;
-    margin: 0;
-  }
-  
-  #urlForm {
-    display: flex;
-    gap: 5px;
-  }
-  
-  #urlInput {
-    flex-grow: 1;
-    padding: 5px;
-  }
-  
-  button {
-    padding: 5px 10px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    cursor: pointer;
-  }
-  
-  button:hover {
-    background-color: #45a049;
-  }
-  
-  #urlList {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-  }
-  
-  .urlItem {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 5px;
-    border-bottom: 1px solid #ccc;
-  }
-  
-  .removeBtn {
-    background-color: #f44336;
-    color: white;
-    border: none;
-    padding: 2px 5px;
-    cursor: pointer;
-  }
-  
-  .removeBtn:hover {
-    background-color: #d32f2f;
-  }
-  
-  
+  font-family: 'Roboto', Arial, sans-serif;
+  width: 350px;
+  height: 500px;
+  margin: 0;
+  padding: 0;
+  background-color: #1a1a1a;
+  color: #ffffff;
+  overflow: hidden;
+  display: flex; /* Added display: flex to enable flexbox on body */
+  flex-direction: column; /* Added flex-direction to arrange content vertically */
+}
+
+#bgCanvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+h1 {
+  font-size: 24px;
+  margin: 0;
+  text-align: center;
+  font-weight: 700;
+  letter-spacing: 1px;
+  font-family: 'Montserrat', sans-serif;
+}
+
+#urlForm {
+  display: flex;
+  gap: 10px;
+}
+
+#urlInput {
+  flex-grow: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+#urlInput:focus {
+  outline: none;
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+#addUrlBtn {
+  padding: 10px 20px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+#addUrlBtn:hover {
+  background-color: #45a049;
+}
+
+.url-list-container {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding-right: 5px;
+}
+
+#urlList {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.urlItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 15px;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  margin-bottom: 10px;
+  transition: all 0.3s ease;
+}
+
+.urlItem:hover {
+  transform: translateY(-2px);
+  background-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 10px rgba(76, 175, 80, 0.2);
+}
+
+.urlItem span {
+  word-break: break-all;
+  font-size: 14px;
+  color: #7FFFD4;
+  font-weight: 500;
+  flex-grow: 1;
+  margin-right: 10px;
+  font-family: 'Roboto Mono', monospace;
+  text-shadow: 0 0 5px rgba(127, 255, 212, 0.5);
+}
+
+.removeBtn {
+  background-color: rgba(244, 67, 54, 0.8);
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 12px;
+}
+
+.removeBtn:hover {
+  background-color: rgba(244, 67, 54, 1);
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(76, 175, 80, 0.3);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(76, 175, 80, 0.5);
+}
+
+.footer {
+  text-align: center;
+  font-size: 12px;
+  /* color: rgba(127, 255, 212, 0.8); */
+  color: rgb(243, 255, 251);
+  margin-top: auto;
+  padding: 3px 0;
+  /* background-color: rgba(0, 0, 0, 0.2); */
+  /* border-top: 1px solid rgb(243, 255, 251); */
+  box-shadow: rgb(243, 255, 251);
+  font-weight: 400;
+  letter-spacing: 0.5px;
+}
+.footer a {
+  color: inherit;
+  text-decoration: none;
+  transition: opacity 0.3s ease;
+  cursor: pointer;
+}
+
+.footer a:hover {
+  opacity: 0.8;
+}
+
