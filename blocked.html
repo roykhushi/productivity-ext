@@ -1,0 +1,79 @@
+<!-- blocked.html -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Site Blocked - FocusGuard</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+        
+      body {
+        min-width: 500px;
+        min-height: 600px;
+      }
+
+      .blocked-container {
+        position: absolute;
+        z-index: 2;
+        background-color: rgba(255, 255, 255, 0.1);
+        padding: 2rem;
+        border-radius: 10px;
+        text-align: center;
+        max-width: 500px;
+        max-height: 500px;
+        margin: 50px auto;
+      }
+
+      .button-container {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 20px;
+      }
+
+      .manage-btn {
+        background-color: transparent;
+        color: #4caf50;
+        border: 1px solid #4caf50;
+        padding: 5px 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 12px;
+      }
+
+      .manage-btn:hover {
+        background-color: rgba(76, 175, 80, 0.1);
+      }
+      .close-btn {
+        background-color: rgba(244, 67, 54, 0.8);
+        color: white;
+        border: none;
+        padding: 5px 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 12px;
+      }
+      .close-btn:hover {
+        background-color: rgba(244, 67, 54, 1);
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="bgCanvas"></canvas>
+    <div class="blocked-container">
+      <h1>⚠️ Access Blocked</h1>
+      <p>
+        This site is not in your whitelist. To access this site, please add it
+        to your allowed URLs through the FocusGuard extension.
+      </p>
+      <div class="button-container">
+        <button class="close-btn" id="closedBtn">Close</button>
+        <button class="manage-btn" id="openManager">Manage URLs</button>
+      </div>
+    </div>
+    <script src="blocked.js"></script>
+  </body>
+</html>
