@@ -1,33 +1,56 @@
-chrome.tabs.onCreated.addListener((tab) => {
-    checkUrl(tab);
-  });
-  
-  chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-    if (changeInfo.status === 'loading') {
-      checkUrl(tab);
-    }
-  });
-  
-  function checkUrl(tab) {
+let blockedPopupId = null;
+
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+  if (changeInfo.url && blockedPopupId === null) {
     chrome.storage.sync.get(['urls'], (result) => {
       const allowedUrls = result.urls || [];
       allowedUrls.push('chrome://');
-      const currentUrl = tab.url || tab.pendingUrl;
-  
-      if (currentUrl && !isUrlAllowed(currentUrl, allowedUrls)) {
-        chrome.tabs.remove(tab.id);
+    
+      //skipping these
+      if (changeInfo.url.startsWith('chrome://') || 
+          changeInfo.url.startsWith('chrome-extension://')) {
+        return;
+      }
+
+      let isAllowed = allowedUrls.some(allowedUrl => {
+        if (allowedUrl.endsWith('/')) {
+          return changeInfo.url.startsWith(allowedUrl);
+        }
+        return changeInfo.url === allowedUrl;
+      });
+
+      if (!isAllowed) {
+        chrome.windows.create({
+          url: 'blocked.html',
+          type: 'popup',
+          width: 400,
+          height: 300,
+          focused: true
+        }, (window) => {
+          blockedPopupId = window.id;
+          chrome.tabs.remove(tabId);
+        });
       }
     });
   }
-  
-  function isUrlAllowed(currentUrl, allowedUrls) {
-    return allowedUrls.some((allowedUrl) => {
-      if (allowedUrl.endsWith('/')) {
-        return currentUrl.startsWith(allowedUrl);
-      } else {
-        return currentUrl === allowedUrl;
-      }
-    });
+});
+
+chrome.windows.onRemoved.addListener((windowId) => {
+  if (windowId === blockedPopupId) {
+    blockedPopupId = null;
   }
-  
-  
+});
+
+
+chrome.runtime.onMessage.addListener((message, sendResponse) => {
+  if (message.action === 'openMainPopup') {
+      chrome.windows.create({
+          url: 'popup.html',
+          type: 'popup',
+          width: 400,
+          height: 600,
+          focused: true
+      });
+      sendResponse({ success: true });
+  }
+});

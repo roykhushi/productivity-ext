@@ -1,0 +1,56 @@
+<!-- blocked.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Site Blocked - FocusGuard</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            min-width: 400px;
+            min-height: 300px;
+        }
+        
+        .blocked-container {
+            position: relative;
+            z-index: 2;
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            border-radius: 10px;
+            text-align: center;
+            max-width: 500px;
+            margin: 50px auto;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .manage-btn {
+            background-color: transparent;
+            color: #4CAF50;
+            border: 1px solid #4CAF50;
+        }
+
+        .manage-btn:hover {
+            background-color: rgba(76, 175, 80, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <canvas id="bgCanvas"></canvas>
+    <div class="blocked-container">
+        <h1>⚠️ Access Blocked</h1>
+        <p>This site is not in your whitelist. To access this site, please add it to your allowed URLs through the FocusGuard extension.</p>
+        <div class="button-container">
+            <button class="close-btn" id="closedBtn" >Close</button>
+            <button class="manage-btn" id="openManager">Manage URLs</button>
+        </div>
+    </div>
+    <script src="blocked.js"></script>
+</body>
+</html>
