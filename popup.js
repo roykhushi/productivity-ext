@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Cloud-like background animation
   const particles = [];
-  const particleCount = 50;
+  const particleCount = 500;
   let animationId;
 
   class Particle {
@@ -130,5 +130,26 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
     urlList.appendChild(li);
   }
+
+  // Tab switching functionality
+  const mainTabs = document.querySelectorAll('.main-tab-button');
+  const views = document.querySelectorAll('.view-section');
+  
+  mainTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      // Update active tab
+      mainTabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      
+      // Show corresponding view
+      const viewToShow = tab.dataset.view;
+      views.forEach(view => {
+        view.classList.remove('active');
+        if (view.id === `${viewToShow}View`) {
+          view.classList.add('active');
+        }
+      });
+    });
+  });
 });
 

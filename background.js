@@ -54,3 +54,115 @@ chrome.runtime.onMessage.addListener((message, sendResponse) => {
       sendResponse({ success: true });
   }
 });
+
+let timerState = {
+  mode: 'work', // Modes: work, shortBreak, longBreak
+  timeLeft: 25 * 60, // Time in seconds
+  isRunning: false,
+  completedSessions: 0,
+};
+
+const timerSettings = {
+  work: 25 * 60, // 25 minutes
+  shortBreak: 5 * 60, // 5 minutes
+  longBreak: 15 * 60, // 15 minutes
+};
+
+let timerInterval;
+
+chrome.runtime.onInstalled.addListener(() => {
+  chrome.storage.local.set({ timerState });
+});
+
+// Listen for messages from the popup or other parts of the extension
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.action === 'startTimer') {
+    startTimer(message.mode);
+    sendResponse({ success: true });
+  } else if (message.action === 'stopTimer') {
+    stopTimer();
+    sendResponse({ success: true });
+  } else if (message.action === 'switchMode') {
+    switchMode(message.mode);
+    sendResponse({ success: true });
+  } else if (message.action === 'getTimerState') {
+    sendResponse(timerState);
+  } else if (message.action === 'resetTimer') {
+    resetTimer(message.mode);
+    sendResponse({ success: true });
+  }
+});
+
+function startTimer(mode) {
+  stopTimer(); // Clear any existing timer
+  timerState.mode = mode;
+  timerState.timeLeft = timerSettings[mode];
+  timerState.isRunning = true;
+  saveTimerState();
+
+  timerInterval = setInterval(() => {
+    timerState.timeLeft--;
+    saveTimerState();
+
+    if (timerState.timeLeft <= 0) {
+      timerComplete();
+    }
+  }, 1000);
+}
+
+function stopTimer() {
+  clearInterval(timerInterval);
+  timerState.isRunning = false;
+  saveTimerState();
+}
+
+function switchMode(mode) {
+  stopTimer();
+  timerState.mode = mode;
+  timerState.timeLeft = timerSettings[mode];
+  timerState.isRunning = false;
+  saveTimerState();
+}
+
+function timerComplete() {
+  stopTimer();
+  playAlarmSound();
+
+  if (timerState.mode === 'work') {
+    timerState.completedSessions++;
+    if (timerState.completedSessions % 4 === 0) {
+      switchMode('longBreak');
+    } else {
+      switchMode('shortBreak');
+    }
+  } else {
+    switchMode('work');
+  }
+
+  chrome.notifications.create({
+    type: 'basic',
+    iconUrl: 'icon.png',
+    title: 'Timer Complete!',
+    message: `${timerState.mode === 'work' ? 'Work session' : 'Break'} is complete!`,
+  });
+
+  saveTimerState();
+}
+
+function saveTimerState() {
+  chrome.storage.local.set({ timerState });
+}
+
+function playAlarmSound() {
+  const audio = new Audio('alarm.mp3');
+  audio.play();
+}
+
+function resetTimer(mode) {
+  stopTimer();
+  timerState.mode = mode;
+  timerState.timeLeft = timerSettings[mode];
+  timerState.isRunning = false;
+  saveTimerState();
+}
+
