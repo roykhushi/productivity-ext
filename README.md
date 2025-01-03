@@ -1,3 +1,5 @@
+## FocusGuard: Upgrade your productivity.
+
 To use this Extension,
 
 - Clone this repo to a local folder
