@@ -32,6 +32,7 @@ class PomodoroTimer {
     this.resetButton = document.getElementById('resetTimer');
     this.timerStatus = document.getElementById('timerStatus');
     this.tabButtons = document.querySelectorAll('.tab-button');
+    this.audio = new Audio(chrome.runtime.getURL('alarm.mp3'));
   }
 
   loadState() {
@@ -51,6 +52,11 @@ class PomodoroTimer {
     this.tabButtons.forEach((button) =>
       button.addEventListener('click', (e) => this.switchMode(e.target.dataset.mode))
     );
+    chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+      if (message.action === 'timerComplete') {
+        this.playAlarmSound();
+      }
+    });
   }
 
   switchMode(mode) {
@@ -137,6 +143,12 @@ class PomodoroTimer {
     this.timerSection.style.backgroundColor = this.colors[this.state.mode];
     this.tabButtons.forEach((button) => {
       button.classList.toggle('active', button.dataset.mode === this.state.mode);
+    });
+  }
+
+  playAlarmSound() {
+    this.audio.play().catch(error => {
+      console.error('Error playing audio:', error);
     });
   }
 }

@@ -118,8 +118,7 @@ function switchMode(mode) {
 
 function timerComplete() {
   stopTimer();
-  playAlarmSound();
-
+  
   if (timerState.mode === 'work') {
     timerState.completedSessions++;
     if (timerState.completedSessions % 4 === 0) {
@@ -130,6 +129,8 @@ function timerComplete() {
   } else {
     switchMode('work');
   }
+
+  chrome.runtime.sendMessage({ action: 'timerComplete' });
 
   chrome.notifications.create({
     type: 'basic',
@@ -143,11 +144,6 @@ function timerComplete() {
 
 function saveTimerState() {
   chrome.storage.local.set({ timerState });
-}
-
-function playAlarmSound() {
-  const audio = new Audio('alarm.mp3');
-  audio.play();
 }
 
 function resetTimer(mode) {
