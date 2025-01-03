@@ -16,6 +16,7 @@ class PomodoroTimer {
       mode: 'work',
       timeLeft: this.settings.work,
       isRunning: false,
+      isPaused: false
     };
 
     this.initializeElements();
@@ -27,6 +28,7 @@ class PomodoroTimer {
     this.timerSection = document.querySelector('.timer-section');
     this.timeDisplay = document.getElementById('timeDisplay');
     this.startButton = document.getElementById('startTimer');
+    this.resumeButton = document.getElementById('resumeTimer');
     this.resetButton = document.getElementById('resetTimer');
     this.timerStatus = document.getElementById('timerStatus');
     this.tabButtons = document.querySelectorAll('.tab-button');
@@ -44,6 +46,7 @@ class PomodoroTimer {
 
   setupEventListeners() {
     this.startButton.addEventListener('click', () => this.toggleTimer());
+    this.resumeButton.addEventListener('click', () => this.resumeTimer());
     this.resetButton.addEventListener('click', () => this.resetTimer());
     this.tabButtons.forEach((button) =>
       button.addEventListener('click', (e) => this.switchMode(e.target.dataset.mode))
@@ -51,11 +54,12 @@ class PomodoroTimer {
   }
 
   switchMode(mode) {
-    if (this.state.mode === mode) return; // Prevent unnecessary mode switches
+    if (this.state.mode === mode) return;
     chrome.runtime.sendMessage({ action: 'stopTimer' }, () => {
       this.state.mode = mode;
       this.state.timeLeft = this.settings[mode];
       this.state.isRunning = false;
+      this.state.isPaused = false;
       this.updateDisplay();
       this.updateUI();
       chrome.runtime.sendMessage({ action: 'saveTimerState', state: this.state });
@@ -67,24 +71,37 @@ class PomodoroTimer {
     if (this.state.isRunning) {
       chrome.runtime.sendMessage({ action: 'stopTimer' }, () => {
         this.state.isRunning = false;
+        this.state.isPaused = true;
         this.updateUI();
+        chrome.runtime.sendMessage({ action: 'saveTimerState', state: this.state });
       });
     } else {
-      if (this.state.timeLeft === this.settings[this.state.mode]) {
-        chrome.runtime.sendMessage({ action: 'startTimer', mode: this.state.mode }, () => {
-          this.state.isRunning = true;
-          this.updateUI();
-        });
-      } else {
-        this.resetTimer();
-      }
+      this.startTimer();
     }
+  }
+
+  startTimer() {
+    chrome.runtime.sendMessage({ 
+      action: 'startTimer', 
+      mode: this.state.mode, 
+      timeLeft: this.state.timeLeft 
+    }, () => {
+      this.state.isRunning = true;
+      this.state.isPaused = false;
+      this.updateUI();
+      chrome.runtime.sendMessage({ action: 'saveTimerState', state: this.state });
+    });
+  }
+
+  resumeTimer() {
+    this.startTimer();
   }
 
   resetTimer() {
     chrome.runtime.sendMessage({ action: 'stopTimer' }, () => {
       this.state.timeLeft = this.settings[this.state.mode];
       this.state.isRunning = false;
+      this.state.isPaused = false;
       this.updateDisplay();
       this.updateUI();
       chrome.runtime.sendMessage({ action: 'saveTimerState', state: this.state });
@@ -98,19 +115,25 @@ class PomodoroTimer {
     this.timeDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds
       .toString()
       .padStart(2, '0')}`;
-
-    const statusMessages = {
-      work: 'Time to focus!',
-      shortBreak: 'Take a short break!',
-      longBreak: 'Take a long break!',
-    };
-    this.timerStatus.textContent = statusMessages[this.state.mode];
   }
 
   updateUI() {
-    this.startButton.textContent = this.state.isRunning ? 'PAUSE' : 'START';
-    this.startButton.classList.toggle('running', this.state.isRunning);
-    this.resetButton.style.display = this.state.isRunning ? 'inline-block' : 'none';
+    if (this.state.isRunning) {
+      this.startButton.textContent = 'PAUSE';
+      this.startButton.style.display = 'inline-block';
+      this.resumeButton.style.display = 'none';
+      this.resetButton.style.display = 'inline-block';
+    } else if (this.state.isPaused) {
+      this.startButton.style.display = 'none';
+      this.resumeButton.style.display = 'inline-block';
+      this.resetButton.style.display = 'inline-block';
+    } else {
+      this.startButton.textContent = 'START';
+      this.startButton.style.display = 'inline-block';
+      this.resumeButton.style.display = 'none';
+      this.resetButton.style.display = 'none';
+    }
+
     this.timerSection.style.backgroundColor = this.colors[this.state.mode];
     this.tabButtons.forEach((button) => {
       button.classList.toggle('active', button.dataset.mode === this.state.mode);

@@ -6,7 +6,6 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
       const allowedUrls = result.urls || [];
       allowedUrls.push('chrome://');
     
-      //skipping these
       if (changeInfo.url.startsWith('chrome://') || 
           changeInfo.url.startsWith('chrome-extension://')) {
         return;
@@ -41,31 +40,18 @@ chrome.windows.onRemoved.addListener((windowId) => {
   }
 });
 
-
-chrome.runtime.onMessage.addListener((message, sendResponse) => {
-  if (message.action === 'openMainPopup') {
-      chrome.windows.create({
-          url: 'popup.html',
-          type: 'popup',
-          width: 400,
-          height: 600,
-          focused: true
-      });
-      sendResponse({ success: true });
-  }
-});
-
 let timerState = {
-  mode: 'work', // Modes: work, shortBreak, longBreak
-  timeLeft: 25 * 60, // Time in seconds
+  mode: 'work',
+  timeLeft: 25 * 60,
   isRunning: false,
+  isPaused: false,
   completedSessions: 0,
 };
 
 const timerSettings = {
-  work: 25 * 60, // 25 minutes
-  shortBreak: 5 * 60, // 5 minutes
-  longBreak: 15 * 60, // 15 minutes
+  work: 25 * 60,
+  shortBreak: 5 * 60,
+  longBreak: 15 * 60,
 };
 
 let timerInterval;
@@ -74,10 +60,9 @@ chrome.runtime.onInstalled.addListener(() => {
   chrome.storage.local.set({ timerState });
 });
 
-// Listen for messages from the popup or other parts of the extension
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === 'startTimer') {
-    startTimer(message.mode);
+    startTimer(message.mode, message.timeLeft);
     sendResponse({ success: true });
   } else if (message.action === 'stopTimer') {
     stopTimer();
@@ -90,14 +75,19 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   } else if (message.action === 'resetTimer') {
     resetTimer(message.mode);
     sendResponse({ success: true });
+  } else if (message.action === 'saveTimerState') {
+    timerState = message.state;
+    saveTimerState();
+    sendResponse({ success: true });
   }
 });
 
-function startTimer(mode) {
-  stopTimer(); // Clear any existing timer
+function startTimer(mode, timeLeft) {
+  stopTimer();
   timerState.mode = mode;
-  timerState.timeLeft = timerSettings[mode];
+  timerState.timeLeft = timeLeft || timerSettings[mode];
   timerState.isRunning = true;
+  timerState.isPaused = false;
   saveTimerState();
 
   timerInterval = setInterval(() => {
@@ -113,6 +103,7 @@ function startTimer(mode) {
 function stopTimer() {
   clearInterval(timerInterval);
   timerState.isRunning = false;
+  timerState.isPaused = true;
   saveTimerState();
 }
 
@@ -121,6 +112,7 @@ function switchMode(mode) {
   timerState.mode = mode;
   timerState.timeLeft = timerSettings[mode];
   timerState.isRunning = false;
+  timerState.isPaused = false;
   saveTimerState();
 }
 
@@ -163,6 +155,7 @@ function resetTimer(mode) {
   timerState.mode = mode;
   timerState.timeLeft = timerSettings[mode];
   timerState.isRunning = false;
+  timerState.isPaused = false;
   saveTimerState();
 }
 
