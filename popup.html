@@ -5,23 +5,55 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>FocusGuard</title>
   <link rel="stylesheet" href="styles.css">
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Roboto+Mono:wght@500&display=swap" rel="stylesheet">
 </head>
 <body>
   <canvas id="bgCanvas"></canvas>
   <div class="container">
     <h1>FocusGuard</h1>
-    <form id="urlForm">
-      <input type="text" id="urlInput" placeholder="Enter URL" required>
-      <button type="submit" id="addUrlBtn">Add URL</button>
-    </form>
-    <div class="url-list-container">
-      <ul id="urlList"></ul>
+    
+    <!-- Main Navigation -->
+    <div class="main-tabs">
+      <button class="main-tab-button active" data-view="urls">URLs</button>
+      <button class="main-tab-button" data-view="timer">Timer</button>
     </div>
+
+    <!-- URL Management Section -->
+    <div id="urlsView" class="view-section active">
+      <form id="urlForm">
+        <input type="text" id="urlInput" placeholder="Enter URL" required>
+        <button type="submit" id="addUrlBtn">Add URL</button>
+      </form>
+      <div class="url-list-container">
+        <ul id="urlList"></ul>
+      </div>
+    </div>
+
+    <!-- Timer Section -->
+    <div id="timerView" class="view-section">
+      <div class="timer-section">
+        <div class="timer-tabs">
+          <button class="tab-button active" data-mode="work">Pomodoro</button>
+          <button class="tab-button" data-mode="shortBreak">Short Break</button>
+          <button class="tab-button" data-mode="longBreak">Long Break</button>
+        </div>
+        <div class="timer-display">
+          <div id="timeDisplay">25:00</div>
+          <div class="timer-controls">
+            <button id="startTimer">START</button>
+            <button id="resumeTimer" style="display: none;">RESUME</button>
+            <button id="resetTimer" style="display: none;">RESET</button>
+          </div>
+          <div id="timerStatus">Time to focus!</div>
+        </div>
+      </div>
+    </div>
+
     <footer class="footer">
       <a href="https://x.com/paulieadi_" target="_blank" rel="noopener noreferrer">Made with ❤️ by Aditya</a>
     </footer>
   </div>
+  <script src="timer.js"></script>
   <script src="popup.js"></script>
 </body>
 </html>

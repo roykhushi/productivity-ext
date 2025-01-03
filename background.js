@@ -6,7 +6,6 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
       const allowedUrls = result.urls || [];
       allowedUrls.push('chrome://');
     
-      //skipping these
       if (changeInfo.url.startsWith('chrome://') || 
           changeInfo.url.startsWith('chrome-extension://')) {
         return;
@@ -41,16 +40,122 @@ chrome.windows.onRemoved.addListener((windowId) => {
   }
 });
 
+let timerState = {
+  mode: 'work',
+  timeLeft: 25 * 60,
+  isRunning: false,
+  isPaused: false,
+  completedSessions: 0,
+};
 
-chrome.runtime.onMessage.addListener((message, sendResponse) => {
-  if (message.action === 'openMainPopup') {
-      chrome.windows.create({
-          url: 'popup.html',
-          type: 'popup',
-          width: 400,
-          height: 600,
-          focused: true
-      });
-      sendResponse({ success: true });
+const timerSettings = {
+  work: 25 * 60,
+  shortBreak: 5 * 60,
+  longBreak: 15 * 60,
+};
+
+let timerInterval;
+
+chrome.runtime.onInstalled.addListener(() => {
+  chrome.storage.local.set({ timerState });
+});
+
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.action === 'startTimer') {
+    startTimer(message.mode, message.timeLeft);
+    sendResponse({ success: true });
+  } else if (message.action === 'stopTimer') {
+    stopTimer();
+    sendResponse({ success: true });
+  } else if (message.action === 'switchMode') {
+    switchMode(message.mode);
+    sendResponse({ success: true });
+  } else if (message.action === 'getTimerState') {
+    sendResponse(timerState);
+  } else if (message.action === 'resetTimer') {
+    resetTimer(message.mode);
+    sendResponse({ success: true });
+  } else if (message.action === 'saveTimerState') {
+    timerState = message.state;
+    saveTimerState();
+    sendResponse({ success: true });
   }
 });
+
+function startTimer(mode, timeLeft) {
+  stopTimer();
+  timerState.mode = mode;
+  timerState.timeLeft = timeLeft || timerSettings[mode];
+  timerState.isRunning = true;
+  timerState.isPaused = false;
+  saveTimerState();
+
+  timerInterval = setInterval(() => {
+    timerState.timeLeft--;
+    saveTimerState();
+
+    if (timerState.timeLeft <= 0) {
+      timerComplete();
+    }
+  }, 1000);
+}
+
+function stopTimer() {
+  clearInterval(timerInterval);
+  timerState.isRunning = false;
+  timerState.isPaused = true;
+  saveTimerState();
+}
+
+function switchMode(mode) {
+  stopTimer();
+  timerState.mode = mode;
+  timerState.timeLeft = timerSettings[mode];
+  timerState.isRunning = false;
+  timerState.isPaused = false;
+  saveTimerState();
+}
+
+function timerComplete() {
+  stopTimer();
+  playAlarmSound();
+
+  if (timerState.mode === 'work') {
+    timerState.completedSessions++;
+    if (timerState.completedSessions % 4 === 0) {
+      switchMode('longBreak');
+    } else {
+      switchMode('shortBreak');
+    }
+  } else {
+    switchMode('work');
+  }
+
+  chrome.notifications.create({
+    type: 'basic',
+    iconUrl: 'icon.png',
+    title: 'Timer Complete!',
+    message: `${timerState.mode === 'work' ? 'Work session' : 'Break'} is complete!`,
+  });
+
+  saveTimerState();
+}
+
+function saveTimerState() {
+  chrome.storage.local.set({ timerState });
+}
+
+function playAlarmSound() {
+  const audio = new Audio('alarm.mp3');
+  audio.play();
+}
+
+function resetTimer(mode) {
+  stopTimer();
+  timerState.mode = mode;
+  timerState.timeLeft = timerSettings[mode];
+  timerState.isRunning = false;
+  timerState.isPaused = false;
+  saveTimerState();
+}
+
