@@ -16,6 +16,7 @@
     <div class="main-tabs">
       <button class="main-tab-button active" data-view="urls">URLs</button>
       <button class="main-tab-button" data-view="timer">Timer</button>
+      <button class="main-tab-button" data-view="todo">To-Do</button>
     </div>
 
     <!-- URL Management Section -->
@@ -49,12 +50,24 @@
       </div>
     </div>
 
+    <!-- To-Do List Section -->
+    <div id="todoView" class="view-section">
+      <div class="todo-section">
+        <form id="todoForm">
+          <input type="text" id="todoInput" placeholder="Enter a new task" required>
+          <button type="submit" id="addTodoBtn">Add Task</button>
+        </form>
+        <ul id="todoList" class="todo-list"></ul>
+      </div>
+    </div>
+
     <footer class="footer">
       <a href="https://x.com/paulieadi_" target="_blank" rel="noopener noreferrer">Made with ❤️ by Aditya</a>
     </footer>
   </div>
   <script src="timer.js"></script>
   <script src="popup.js"></script>
+  <script src="todo.js"></script>
 </body>
 </html>
 

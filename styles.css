@@ -78,13 +78,13 @@ h1 {
   display: flex;
 }
 
-#urlForm {
+#urlForm, #todoForm {
   display: flex;
   gap: 10px;
   padding-bottom:8px;
 }
 
-#urlInput {
+#urlInput, #todoInput {
   flex-grow: 1;
   padding: 10px;
   border: none;
@@ -95,12 +95,12 @@ h1 {
   transition: all 0.3s ease;
 }
 
-#urlInput:focus {
+#urlInput:focus, #todoInput:focus {
   outline: none;
   background-color: rgba(255, 255, 255, 0.2);
 }
 
-#addUrlBtn {
+#addUrlBtn, #addTodoBtn {
   padding: 10px 20px;
   background-color: #4CAF50;
   color: white;
@@ -110,23 +110,23 @@ h1 {
   transition: all 0.3s ease;
 }
 
-#addUrlBtn:hover {
+#addUrlBtn:hover, #addTodoBtn:hover {
   background-color: #45a049;
 }
 
-.url-list-container {
+.url-list-container, .todo-section {
   flex-grow: 1;
   overflow-y: auto;
   padding-right: 5px;
 }
 
-#urlList {
+#urlList, #todoList {
   list-style-type: none;
   padding: 0;
   margin: 0;
 }
 
-.urlItem {
+.urlItem, #todoList li {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -137,13 +137,13 @@ h1 {
   transition: all 0.3s ease;
 }
 
-.urlItem:hover {
+.urlItem:hover, #todoList li:hover {
   transform: translateY(-2px);
   background-color: rgba(255, 255, 255, 0.1);
   box-shadow: 0 4px 10px rgba(76, 175, 80, 0.2);
 }
 
-.urlItem span {
+.urlItem span, .todo-text {
   word-break: break-all;
   font-size: 14px;
   color: #7FFFD4;
@@ -154,7 +154,7 @@ h1 {
   text-shadow: 0 0 5px rgba(127, 255, 212, 0.5);
 }
 
-.removeBtn {
+.removeBtn, .todo-remove {
   background-color: rgba(244, 67, 54, 0.8);
   color: white;
   border: none;
@@ -165,14 +165,14 @@ h1 {
   font-size: 12px;
 }
 
-.removeBtn:hover {
+.removeBtn:hover, .todo-remove:hover {
   background-color: rgba(244, 67, 54, 1);
 }
 
+/* Timer Styles */
 .timer-section {
   background-color: #ba4949;
   padding: 20px;
-  border-radius: 10px;
   transition: background-color 0.3s ease;
 }
 
@@ -184,22 +184,24 @@ h1 {
 }
 
 .tab-button {
-  background: rgba(255, 255, 255, 0.1);
+  background: transparent;
   border: none;
-  padding: 8px;
+  padding: 8px 12px;
   color: white;
   cursor: pointer;
   border-radius: 4px;
   font-size: 14px;
   transition: background-color 0.3s ease;
+  opacity: 0.8;
 }
 
 .tab-button:hover {
-  background: rgba(255, 255, 255, 0.2);
+  opacity: 1;
 }
 
 .tab-button.active {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.15);
+  opacity: 1;
 }
 
 .timer-display {
@@ -243,6 +245,58 @@ h1 {
 
 #timerStatus {
   color: rgba(255, 255, 255, 0.8);
+}
+
+/* Timer mode-specific styles */
+.timer-section[data-mode="work"] {
+  background-color: #ba4949;
+}
+
+.timer-section[data-mode="work"] .timer-controls button {
+  color: #ba4949;
+}
+
+.timer-section[data-mode="shortBreak"] {
+  background-color: #38858a;
+}
+
+.timer-section[data-mode="shortBreak"] .timer-controls button {
+  color: #38858a;
+}
+
+.timer-section[data-mode="longBreak"] {
+  background-color: #397097;
+}
+
+.timer-section[data-mode="longBreak"] .timer-controls button {
+  color: #397097;
+}
+
+/* To-Do List Styles */
+.todo-checkbox {
+  margin-right: 10px;
+}
+
+.todo-text {
+  flex-grow: 1;
+}
+
+.todo-text.completed {
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+
+.todo-remove {
+  background: none;
+  border: none;
+  color: #ff6b6b;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 0 5px;
+}
+
+.todo-remove:hover {
+  color: #ff4757;
 }
 
 .footer {
